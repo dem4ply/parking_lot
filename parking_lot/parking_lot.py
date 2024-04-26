@@ -30,26 +30,67 @@ class Cannot_find_car_error( Parking_lot_error ):
 
 
 class Car:
-    def __init__( self, car, tariff, location, fee=0 ):
+    def __init__(
+            self, car, tariff, location, hourly_fee, daily_fee,
+            start=None, finish=None ):
         self.car = car
         self.tariff = tariff
         self.location = location
-        self.fee = fee
-        self.start = datetime.datetime.now()
-        self.finish = None
+        if start is None:
+            start = datetime.datetime.now()
+        self.start = start
+        self.finish = finish
+
+        self.hourly_fee = hourly_fee
+        self.daily_fee = daily_fee
 
     def exit( self ):
         self.finish = datetime.datetime.now()
+
+    @property
+    def fee( self ):
+        if self.is_free_charge:
+            return 0
+
+        if self.is_daily:
+            return self.proportional_diff_time * self.daily_fee
+        if self.is_hourly:
+            return self.proportional_diff_time * self.hourly_fee
+        raise NotImplementedError(
+            f"the tariff {self.tariff} is not implemented" )
+
+    @property
+    def is_free_charge( self ):
+        diff_time = self.finish - self.start
+        return diff_time.total_seconds() // ( 60 * 15 ) < 1
+
+    @property
+    def is_daily( self ):
+        return self.tariff == 'daily'
+
+    @property
+    def is_hourly( self ):
+        return self.tariff == 'hourly'
+
+    @property
+    def proportional_diff_time( self ):
+        diff_time = self.finish - self.start
+        if self.is_hourly:
+            return ( diff_time.total_seconds() // 3600 ) + 1
+        if self.is_daily:
+            return ( diff_time.total_seconds() // 86400 ) + 1
 
 
 class Parking_lot:
     locations = None
     lot = None
 
-    def __init__( self, amount ):
+    def __init__( self, amount, hourly_fee=1, daily_fee=20 ):
         self.lot = {}
         self.locations = []
         self.amount_lot = amount
+        self.hourly_fee = hourly_fee
+        self.daily_fee = daily_fee
 
     @property
     def amount_lot( self ):
@@ -67,7 +108,9 @@ class Parking_lot:
             raise Full_parking_error
 
         location = self.find_next_available_location()
-        result = Car( car=car, tariff=tariff, location=location, )
+        result = Car(
+            car=car, tariff=tariff, location=location,
+            hourly_fee=self.hourly_fee, daily_fee=self.daily_fee )
         self.locations[ location ] = result
         self.lot[ car ] = result
         return result
