@@ -3,7 +3,7 @@ import logging
 import sys
 from argparse import ArgumentParser
 
-from parking_lot.parking_lot_api import app
+from parking_lot.parking_lot_api import app, parking_lot_db
 
 
 logger_formarter = '%(levelname)s %(name)s %(asctime)s %(message)s'
@@ -16,6 +16,14 @@ parser = ArgumentParser(
 parser.add_argument(
     "--log_level", dest="log_level", default="INFO",
     help="nivel de log", )
+
+parser.add_argument(
+    "--daily_fee", dest="daily_fee", default=20, type=int,
+    help="set the daily fee", )
+
+parser.add_argument(
+    "--hourly_fee", dest="hourly_fee", default=1, type=int,
+    help="set the hourly fee", )
 
 sub_parsers = parser.add_subparsers(
     dest='command', help='sub-command help' )
@@ -34,6 +42,8 @@ def main():
 
     if args.command == 'runserver':
         port = args.port
+        parking_lot_db.hourly_fee = args.hourly_fee
+        parking_lot_db.daily_fee = args.daily_fee
         app.run( "0.0.0.0", port=port )
 
     return 0
