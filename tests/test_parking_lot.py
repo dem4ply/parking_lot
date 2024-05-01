@@ -6,7 +6,7 @@ import unittest
 from parking_lot.parking_lot import (
     Parking_lot, Full_parking_error, Ticket, Cannot_find_car_error
 )
-from parking_lot.factories import (
+from tests.factories import (
     Car_add, Car_add_daily, Car_add_hourly,
     Car_daily_free, Car_hourly_free,
     Car_daily_fee as Car_daily_factory,
