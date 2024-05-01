@@ -4,7 +4,7 @@ import datetime
 import random
 import unittest
 from parking_lot.parking_lot import (
-    Parking_lot, Full_parking_error, Car, Cannot_find_car_error
+    Parking_lot, Full_parking_error, Ticket, Cannot_find_car_error
 )
 from parking_lot.factories import (
     Car_add, Car_add_daily, Car_add_hourly,
@@ -95,7 +95,7 @@ class Test_Parking_lot_add(Test_Parking_lot):
     def test_add_car_should_add_current_date_and_location(self):
         self.parking_lot.add(**self.new_car)
         car_data = self.parking_lot[self.new_car['license_plate']]
-        self.assertIsInstance(car_data, Car)
+        self.assertIsInstance(car_data, Ticket)
         self.assertIsNotNone(car_data.location)
         self.assertTrue(car_data.start)
 
@@ -140,7 +140,7 @@ class Test_Parking_lot_remove(Test_Parking_lot):
         location = random.randint(0, self.amount - 1)
         car = self.parking_lot.remove(location)
         self.assertIsNotNone(car)
-        self.assertIsInstance(car, Car)
+        self.assertIsInstance(car, Ticket)
 
     def test_remove_empty_location_should_raise_exception(self):
         self.parking_lot.remove(5)

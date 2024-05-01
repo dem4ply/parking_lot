@@ -1,6 +1,6 @@
 import factory
 from factory import fuzzy
-from parking_lot.parking_lot import Car as Car_model
+from parking_lot.parking_lot import Ticket as Car_model
 
 
 tariffs = ['hourly', 'daily']

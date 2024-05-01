@@ -29,7 +29,7 @@ class Cannot_find_car_error(Parking_lot_error):
         }
 
 
-class Car:
+class Ticket:
     def __init__(
             self, license_plate, tariff, location, hourly_fee, daily_fee,
             start=None, finish=None):
@@ -108,7 +108,7 @@ class Parking_lot:
             raise Full_parking_error
 
         location = self.find_next_available_location()
-        result = Car(
+        result = Ticket(
             license_plate=license_plate, tariff=tariff, location=location,
             hourly_fee=self.hourly_fee, daily_fee=self.daily_fee)
         self.locations[location] = result
