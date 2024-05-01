@@ -67,18 +67,18 @@ class Test_Parking_lot_other(unittest.TestCase):
         self.assertFalse(self.parking_lot.is_empty)
 
 
-class Test_Parking_lot_find_next_available_location( unittest.TestCase ):
+class Test_Parking_lot_find_next_available_location(unittest.TestCase):
     amount = 2
 
     def setUp(self):
         super().setUp()
-        self.parking_lot = Parking_lot( amount=self.amount )
-        for amount in range( self.amount ):
-            self.parking_lot.add( **Car_add.build() )
+        self.parking_lot = Parking_lot(amount=self.amount)
+        for amount in range(self.amount):
+            self.parking_lot.add(**Car_add.build())
 
-    def test_when_is_full_should_not_raise_value_exception( self ):
-        self.assertTrue( self.parking_lot.is_full )
-        with self.assertRaises( Full_parking_error ):
+    def test_when_is_full_should_not_raise_value_exception(self):
+        self.assertTrue(self.parking_lot.is_full)
+        with self.assertRaises(Full_parking_error):
             self.parking_lot.find_next_available_location()
 
 

@@ -23,8 +23,8 @@ class Cannot_find_car_error(Parking_lot_error):
     message = 'Cannot find a car in the location {}.'
 
     def __init__(self, location=None):
-        message = self.message.format( location )
-        super().__init__( message=message )
+        message = self.message.format(location)
+        super().__init__(message=message)
 
 
 class Ticket:
@@ -126,11 +126,11 @@ class Parking_lot:
 
     @property
     def is_full(self):
-        return len( self.lot ) == self.amount_lot
+        return len(self.lot) == self.amount_lot
 
     @property
     def is_empty(self):
-        return not len( self.lot )
+        return not len(self.lot)
 
     def find_next_available_location(self):
         try:
