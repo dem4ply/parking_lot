@@ -126,16 +126,11 @@ class Parking_lot:
 
     @property
     def is_full(self):
-        return (
-            sum((1 for i in self.locations if i is not None))
-            == self.amount_lot)
-        return len(self.lot) >= self.amount_lot
+        return len( self.lot ) == self.amount_lot
 
     @property
     def is_empty(self):
-        return (
-            sum((1 for i in self.locations if i is None))
-            == self.amount_lot)
+        return not len( self.lot )
 
     def find_next_available_location(self):
         try:
