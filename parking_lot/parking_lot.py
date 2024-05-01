@@ -22,11 +22,8 @@ class Cannot_find_car_error(Parking_lot_error):
     message = 'Cannot find a car in the location {}.'
 
     def __init__(self, location=None):
-        message = self.message.format(location)
-        self.data = {
-            'status': 'error',
-            'error': message
-        }
+        message = self.message.format( location )
+        super().__init__( message=message )
 
 
 class Ticket:
