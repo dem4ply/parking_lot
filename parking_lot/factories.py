@@ -7,7 +7,7 @@ tariffs = ['hourly', 'daily']
 
 
 class Car(factory.Factory):
-    car = factory.Faker('license_plate')
+    license_plate = factory.Faker('license_plate')
     tariff = fuzzy.FuzzyChoice(tariffs)
     location = factory.Faker('pyint')
     hourly_fee = factory.Faker('pyint')
@@ -48,7 +48,7 @@ class Car_hourly_free(Car_hourly_fee):
 
 
 class Car_add(factory.Factory):
-    car = factory.Faker('license_plate')
+    license_plate = factory.Faker('license_plate')
     tariff = fuzzy.FuzzyChoice(tariffs)
 
     class Meta:
@@ -56,7 +56,7 @@ class Car_add(factory.Factory):
 
 
 class Car_add_hourly(factory.Factory):
-    car = factory.Faker('license_plate')
+    license_plate = factory.Faker('license_plate')
     tariff = 'hourly'
 
     class Meta:
@@ -64,7 +64,7 @@ class Car_add_hourly(factory.Factory):
 
 
 class Car_add_daily(factory.Factory):
-    car = factory.Faker('license_plate')
+    license_plate = factory.Faker('license_plate')
     tariff = 'daily'
 
     class Meta:

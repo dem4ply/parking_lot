@@ -31,9 +31,9 @@ class Cannot_find_car_error(Parking_lot_error):
 
 class Car:
     def __init__(
-            self, car, tariff, location, hourly_fee, daily_fee,
+            self, license_plate, tariff, location, hourly_fee, daily_fee,
             start=None, finish=None):
-        self.car = car
+        self.license_plate = license_plate
         self.tariff = tariff
         self.location = location
         if start is None:
@@ -103,16 +103,16 @@ class Parking_lot:
         for v in self.lot.values():
             self.locations[v.location] = v
 
-    def add(self, car, tariff):
+    def add(self, license_plate, tariff):
         if self.is_full:
             raise Full_parking_error
 
         location = self.find_next_available_location()
         result = Car(
-            car=car, tariff=tariff, location=location,
+            license_plate=license_plate, tariff=tariff, location=location,
             hourly_fee=self.hourly_fee, daily_fee=self.daily_fee)
         self.locations[location] = result
-        self.lot[car] = result
+        self.lot[license_plate] = result
         return result
 
     def remove(self, location):
@@ -120,7 +120,7 @@ class Parking_lot:
         if car is None:
             raise Cannot_find_car_error(location)
         self.locations[location] = None
-        del self.lot[car.car]
+        del self.lot[car.license_plate]
         car.exit()
         return car
 

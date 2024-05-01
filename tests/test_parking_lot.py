@@ -90,29 +90,29 @@ class Test_Parking_lot_add(Test_Parking_lot):
 
     def test_add_car_should_be_in_the_parking(self):
         self.parking_lot.add(**self.new_car)
-        self.assertIn(self.new_car['car'], self.parking_lot)
+        self.assertIn(self.new_car['license_plate'], self.parking_lot)
 
     def test_add_car_should_add_current_date_and_location(self):
         self.parking_lot.add(**self.new_car)
-        car_data = self.parking_lot[self.new_car['car']]
+        car_data = self.parking_lot[self.new_car['license_plate']]
         self.assertIsInstance(car_data, Car)
         self.assertIsNotNone(car_data.location)
         self.assertTrue(car_data.start)
 
     def test_location_should_be_int(self):
         self.parking_lot.add(**self.new_car)
-        car_data = self.parking_lot[self.new_car['car']]
+        car_data = self.parking_lot[self.new_car['license_plate']]
         self.assertIsInstance(car_data.location, int)
 
     def test_start_should_be_datetime(self):
         self.parking_lot.add(**self.new_car)
-        car_data = self.parking_lot[self.new_car['car']]
+        car_data = self.parking_lot[self.new_car['license_plate']]
         self.assertIsInstance(car_data.start, datetime.datetime)
 
     def test_add_car_should_set_start_to_now_date(self):
         now = datetime.datetime.now()
         self.parking_lot.add(**self.new_car)
-        car_data = self.parking_lot[self.new_car['car']]
+        car_data = self.parking_lot[self.new_car['license_plate']]
         diff_date = car_data.start - now
         self.assertLessEqual(abs(diff_date.total_seconds()), 1)
 
@@ -150,7 +150,7 @@ class Test_Parking_lot_remove(Test_Parking_lot):
     def test_when_remove_should_no_be_in_the_locations_or_lot(self):
         car = self.parking_lot.remove(5)
         self.assertIsNone(self.parking_lot.locations[5])
-        self.assertNotIn(car.car, self.parking_lot.lot)
+        self.assertNotIn(car.license_plate, self.parking_lot.lot)
 
 
 class Test_Parking_lot_daily_fee(Test_Parking_lot):
