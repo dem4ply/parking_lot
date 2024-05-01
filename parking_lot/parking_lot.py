@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import functools
 import datetime
 
 
@@ -56,10 +57,13 @@ class Ticket:
         raise NotImplementedError(
             f"the tariff {self.tariff} is not implemented")
 
+    @functools.cached_property
+    def diff_time(self):
+        return self.finish - self.start
+
     @property
     def is_free_charge(self):
-        diff_time = self.finish - self.start
-        return diff_time.total_seconds() // (60 * 15) < 1
+        return self.diff_time.total_seconds() // (60 * 15) < 1
 
     @property
     def is_daily(self):
@@ -71,11 +75,10 @@ class Ticket:
 
     @property
     def proportional_diff_time(self):
-        diff_time = self.finish - self.start
         if self.is_hourly:
-            return (diff_time.total_seconds() // 3600) + 1
+            return (self.diff_time.total_seconds() // 3600) + 1
         if self.is_daily:
-            return (diff_time.total_seconds() // 86400) + 1
+            return (self.diff_time.total_seconds() // 86400) + 1
 
 
 class Parking_lot:
