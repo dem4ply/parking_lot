@@ -138,7 +138,10 @@ class Parking_lot:
             == self.amount_lot)
 
     def find_next_available_location(self):
-        return self.locations.index(None)
+        try:
+            return self.locations.index(None)
+        except ValueError:
+            raise Full_parking_error from ValueError
 
     def __contains__(self, index):
         return index in self.lot
