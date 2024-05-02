@@ -82,9 +82,6 @@ class Ticket:
 
 
 class ParkingLot:
-    locations = None
-    lot = None
-
     def __init__(self, amount, hourly_fee=1, daily_fee=20):
         self.lot = {}
         self.locations = []
