@@ -69,3 +69,11 @@ class Car_add_daily(factory.Factory):
 
     class Meta:
         model = dict
+
+class Car_add_api(factory.Factory):
+    car = factory.Faker('license_plate')
+    tariff = fuzzy.FuzzyChoice(tariffs)
+
+    class Meta:
+        model = dict
+
