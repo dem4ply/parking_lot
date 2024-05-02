@@ -2,13 +2,14 @@ from marshmallow import Schema, fields, validate
 
 
 not_blank = validate.Length(min=1, error='Field cannot be blank.')
+tariff_valid = validate.OneOf(["hourly", "daily"])
 
 
 class Add(Schema):
     car = fields.String(
         required=True, data_key='car', attribute='license_plate',
         allow_none=False, validate=not_blank)
-    tariff = fields.String(required=True)
+    tariff = fields.String(required=True, validate=tariff_valid)
 
 
 class AddOutput(Schema):

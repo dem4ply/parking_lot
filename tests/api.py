@@ -1,6 +1,6 @@
 import unittest
 from parking_lot.parking_lot_api import app, parking_lot_db
-from tests.factories import CarAddApi as CarAdd
+from tests.factories import CarAddApi, CarAdd
 
 
 class FlaskTest(unittest.TestCase):
@@ -22,7 +22,7 @@ class TestAdd(FlaskTest):
         return super().get('add', params)
 
     def add_car(self):
-        params = CarAdd.build()
+        params = CarAddApi.build()
         response = self.get(params)
         return response
 
@@ -116,6 +116,18 @@ class TestAdd(FlaskTest):
         self.assertEqual(data['status'], 'error')
         self.assertEqual(
             data['error'], 'field car cannot be blank.')
+
+    def test_when_tariff_is_not_valid_should_return_error(self):
+        params = {'car': 'X774HY98', 'tariff': 'hourlyXX'}
+        parking_lot_db.clear()
+        response = self.get(params)
+        self.assertEqual(response.status_code, 400)
+        data = response.get_json()
+        self.assertIn('status', data)
+        self.assertIn('error', data)
+        self.assertEqual(data['status'], 'error')
+        self.assertEqual(
+            data['error'], 'tariff must be one of hourly, daily.')
 
 
 class TestRemove(FlaskTest):
