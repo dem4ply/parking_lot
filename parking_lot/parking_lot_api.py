@@ -45,6 +45,8 @@ def join_messages(messages):
         for msg in v:
             if msg == 'Missing data for required field.':
                 yield f"missing {k} data field"
+            if msg == 'Field cannot be blank.':
+                yield f"field {k} cannot be blank"
 
 
 @api.errorhandler(ValidationError)

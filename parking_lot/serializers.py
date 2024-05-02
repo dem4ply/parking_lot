@@ -1,9 +1,13 @@
-from marshmallow import Schema, fields
+from marshmallow import Schema, fields, validate
+
+
+not_blank = validate.Length(min=1, error='Field cannot be blank.')
 
 
 class Add(Schema):
     car = fields.String(
-        required=True, data_key='car', attribute='license_plate')
+        required=True, data_key='car', attribute='license_plate',
+        allow_none=False, validate=not_blank)
     tariff = fields.String(required=True)
 
 

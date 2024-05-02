@@ -105,6 +105,18 @@ class TestAdd(FlaskTest):
         self.assertEqual(
             data['error'], 'The car X774HY98 is in the parking lot.')
 
+    def test_car_param_empty_should_return_error(self):
+        params = {'car': '', 'tariff': 'hourly'}
+        parking_lot_db.clear()
+        response = self.get(params)
+        self.assertEqual(response.status_code, 400)
+        data = response.get_json()
+        self.assertIn('status', data)
+        self.assertIn('error', data)
+        self.assertEqual(data['status'], 'error')
+        self.assertEqual(
+            data['error'], 'field car cannot be blank.')
+
 
 class TestRemove(FlaskTest):
     def get(self, location=None):
