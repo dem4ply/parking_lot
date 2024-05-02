@@ -5,7 +5,7 @@ import random
 import unittest
 from parking_lot.parking_lot import (
     ParkingLot, FullParkingError, Ticket, CannotFindCarError,
-    TariffNoExistsError,
+    TariffNoExistsError, CarIsInParkingLotError,
 )
 from tests.factories import (
     CarAdd, CarAddDaily, CarAddHourly,
@@ -73,6 +73,14 @@ class TestParkingLotOther(unittest.TestCase):
         self.parking_lot.add(**CarAdd.build())
         self.assertFalse(self.parking_lot.is_empty)
 
+    def test_clear_should_remove_all_cars(self):
+        self.parking_lot.clear()
+        self.assertFalse(self.parking_lot.lot)
+        locations_are_none = map(
+            lambda x: x is None,
+            self.parking_lot.locations)
+        self.assertTrue(all(locations_are_none))
+
 
 class TestParkingLotFindNextAvailableLocation(unittest.TestCase):
     amount = 2
@@ -134,6 +142,12 @@ class TestParkingLotAdd(TestParkingLot):
         self.parking_lot.add(**CarAdd.build())
         with self.assertRaises(FullParkingError):
             self.parking_lot.add(**CarAdd.build())
+
+    def test_when_add_the_same_car_should_raise_exception(self):
+        car = CarAdd.build()
+        self.parking_lot.add(**car)
+        with self.assertRaises(CarIsInParkingLotError):
+            self.parking_lot.add(**car)
 
 
 class TestParkingLotRemove(TestParkingLot):

@@ -19,6 +19,14 @@ class FullParkingError(ParkingLotError):
     message = 'No free space.'
 
 
+class CarIsInParkingLotError(ParkingLotError):
+    message = 'The car {} is in the parking lot.'
+
+    def __init__(self, license_plate=None):
+        message = self.message.format(license_plate)
+        super().__init__(message=message)
+
+
 class CannotFindCarError(ParkingLotError):
     message = 'Cannot find a car in the location {}.'
 
@@ -62,7 +70,7 @@ class Ticket:
             return self.proportional_diff_time * self.daily_fee
         if self.is_hourly:
             return self.proportional_diff_time * self.hourly_fee
-        raise TariffNoExistsError( self.tariff )
+        raise TariffNoExistsError(self.tariff)
 
     @functools.cached_property
     def diff_time(self):
@@ -91,7 +99,6 @@ class Ticket:
 class ParkingLot:
     def __init__(self, amount, hourly_fee=1, daily_fee=20):
         self.lot = {}
-        self.locations = []
         self.amount_lot = amount
         self.hourly_fee = hourly_fee
         self.daily_fee = daily_fee
@@ -103,13 +110,15 @@ class ParkingLot:
     @amount_lot.setter
     def amount_lot(self, value):
         self._amount_lot = value
-        self.locations = [None] * self._amount_lot
+        self._clear_locations()
         for v in self.lot.values():
             self.locations[v.location] = v
 
     def add(self, license_plate, tariff):
         if self.is_full:
             raise FullParkingError
+        if license_plate in self:
+            raise CarIsInParkingLotError(license_plate)
 
         location = self.find_next_available_location()
         result = Ticket(
@@ -141,6 +150,13 @@ class ParkingLot:
             return self.locations.index(None)
         except ValueError:
             raise FullParkingError from ValueError
+
+    def clear(self):
+        self.lot = {}
+        self._clear_locations()
+
+    def _clear_locations(self):
+        self.locations = [None] * self.amount_lot
 
     def __contains__(self, index):
         return index in self.lot

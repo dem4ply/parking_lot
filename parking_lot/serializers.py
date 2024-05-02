@@ -3,7 +3,6 @@ from marshmallow import Schema, fields
 
 class Add(Schema):
     car = fields.String(
-        #required=True, data_key='license_plate', attribute='license_plate')
         required=True, data_key='car', attribute='license_plate')
     tariff = fields.String(required=True)
 

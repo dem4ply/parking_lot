@@ -73,8 +73,8 @@ class TestAdd(FlaskTest):
 
     def test_when_add_car_and_is_full_should_return_error_is_full(self):
         parking_lot_db.amount_lot = 3
-        for v in list( parking_lot_db.lot.values() ):
-            parking_lot_db.remove( v.location )
+        for v in list(parking_lot_db.lot.values()):
+            parking_lot_db.remove(v.location)
         response = self.add_car()
         self.assertEqual(response.status_code, 200)
         response = self.add_car()
@@ -89,6 +89,21 @@ class TestAdd(FlaskTest):
         self.assertIn('error', data)
         self.assertEqual(data['status'], 'error')
         self.assertEqual(data['error'], 'No free space.')
+
+    def test_enter_the_same_car_twice_should_no_be_posible(self):
+        params = {'car': 'X774HY98', 'tariff': 'hourly'}
+        parking_lot_db.clear()
+        response = self.get(params)
+        self.assertEqual(response.status_code, 200)
+
+        response = self.get(params)
+        self.assertEqual(response.status_code, 400)
+        data = response.get_json()
+        self.assertIn('status', data)
+        self.assertIn('error', data)
+        self.assertEqual(data['status'], 'error')
+        self.assertEqual(
+            data['error'], 'The car X774HY98 is in the parking lot.')
 
 
 class TestRemove(FlaskTest):
