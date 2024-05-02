@@ -3,7 +3,7 @@ import functools
 import datetime
 
 
-class Parking_lot_error(Exception):
+class ParkingLotError(Exception):
     message = 'unhandle error with parking lot'
 
     def __init__(self, message=None):
@@ -15,11 +15,11 @@ class Parking_lot_error(Exception):
         }
 
 
-class Full_parking_error(Parking_lot_error):
+class FullParkingError(ParkingLotError):
     message = 'No free space.'
 
 
-class Cannot_find_car_error(Parking_lot_error):
+class CannotFindCarError(ParkingLotError):
     message = 'Cannot find a car in the location {}.'
 
     def __init__(self, location=None):
@@ -81,7 +81,7 @@ class Ticket:
             return (self.diff_time.total_seconds() // 86400) + 1
 
 
-class Parking_lot:
+class ParkingLot:
     locations = None
     lot = None
 
@@ -105,7 +105,7 @@ class Parking_lot:
 
     def add(self, license_plate, tariff):
         if self.is_full:
-            raise Full_parking_error
+            raise FullParkingError
 
         location = self.find_next_available_location()
         result = Ticket(
@@ -118,7 +118,7 @@ class Parking_lot:
     def remove(self, location):
         car = self.locations[location]
         if car is None:
-            raise Cannot_find_car_error(location)
+            raise CannotFindCarError(location)
         self.locations[location] = None
         del self.lot[car.license_plate]
         car.exit()
@@ -136,7 +136,7 @@ class Parking_lot:
         try:
             return self.locations.index(None)
         except ValueError:
-            raise Full_parking_error from ValueError
+            raise FullParkingError from ValueError
 
     def __contains__(self, index):
         return index in self.lot

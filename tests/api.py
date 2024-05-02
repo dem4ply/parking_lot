@@ -1,9 +1,9 @@
 import unittest
 from parking_lot.parking_lot_api import app, parking_lot_db
-from tests.factories import Car_add_api as Car_add
+from tests.factories import CarAddApi as CarAdd
 
 
-class Flask_test(unittest.TestCase):
+class FlaskTest(unittest.TestCase):
     def setUp(self):
         self.ctx = app.app_context()
         self.ctx.push()
@@ -17,12 +17,12 @@ class Flask_test(unittest.TestCase):
         return response
 
 
-class Test_add(Flask_test):
+class TestAdd(FlaskTest):
     def get(self, params=None):
         return super().get('add', params)
 
     def add_car(self):
-        params = Car_add.build()
+        params = CarAdd.build()
         response = self.get(params)
         return response
 
@@ -91,14 +91,14 @@ class Test_add(Flask_test):
         self.assertEqual(data['error'], 'No free space.')
 
 
-class Test_remove(Flask_test):
+class TestRemove(FlaskTest):
     def get(self, location=None):
         if location is not None:
             return super().get('remove', {'location': location})
         return super().get('remove',)
 
 
-class Test_remove_errors(Test_remove):
+class TestRemoveErrors(TestRemove):
 
     def test_should_work(self):
         response = self.get()
@@ -119,10 +119,10 @@ class Test_remove_errors(Test_remove):
             'missing location data field.')
 
 
-class Test_remove_no_empty(Test_remove):
+class TestRemoveNoEmpty(TestRemove):
     def get_any_car(self):
         if parking_lot_db.is_empty:
-            car = parking_lot_db.add(**Car_add.build())
+            car = parking_lot_db.add(**CarAdd.build())
         else:
             car = next(iter(parking_lot_db.lot.values()))
         return car
@@ -167,7 +167,7 @@ class Test_remove_no_empty(Test_remove):
             f'Cannot find a car in the location {car.location}.')
 
 
-class Test_list(Flask_test):
+class TestList(FlaskTest):
     def get(self):
         return super().get('list',)
 

@@ -8,7 +8,7 @@ class Add(Schema):
     tariff = fields.String(required=True)
 
 
-class Add_output(Schema):
+class AddOutput(Schema):
     car = fields.String(required=True, attribute='license_plate')
     tariff = fields.String(required=True)
     status = fields.String(default='success')
@@ -20,7 +20,7 @@ class Remove(Schema):
     location = fields.Int(required=True)
 
 
-class Remove_output(Schema):
+class RemoveOutput(Schema):
     car = fields.String(required=True, attribute='license_plate')
     tariff = fields.String(required=True)
     status = fields.String(default='success')
@@ -30,6 +30,6 @@ class Remove_output(Schema):
     fee = fields.Float()
 
 
-class List_output(Schema):
-    cars = fields.Nested(Add_output, many=True)
+class ListOutput(Schema):
+    cars = fields.Nested(AddOutput, many=True)
     status = fields.String(default='success')

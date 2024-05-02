@@ -4,15 +4,15 @@ from flask_restx import Api, Resource
 from marshmallow.exceptions import ValidationError
 
 from parking_lot.serializers import (
-    Add as Add_serializer,
-    Add_output as Add_output_serializer,
-    Remove as Remove_serializer,
-    Remove_output as Remove_output_serializer,
-    List_output as List_output_serializer,
+    Add as AddSerializer,
+    AddOutput as AddOutputSerializer,
+    Remove as RemoveSerializer,
+    RemoveOutput as RemoveOutputSerializer,
+    ListOutput as ListOutputSerializer,
 )
-from parking_lot.parking_lot import Parking_lot, Parking_lot_error
+from parking_lot.parking_lot import ParkingLot, ParkingLotError
 
-parking_lot_db = Parking_lot(amount=10)
+parking_lot_db = ParkingLot(amount=10)
 
 app = Flask(__name__)
 api = Api(app)
@@ -20,23 +20,23 @@ api = Api(app)
 
 class Add(Resource):
     def get(self):
-        serializer = Add_serializer()
+        serializer = AddSerializer()
         data = serializer.load(request.args)
         car = parking_lot_db.add(**data)
-        return Add_output_serializer().dump(car)
+        return AddOutputSerializer().dump(car)
 
 
 class Remove(Resource):
     def get(self):
-        serializer = Remove_serializer()
+        serializer = RemoveSerializer()
         data = serializer.load(request.args)
         car = parking_lot_db.remove(**data)
-        return Remove_output_serializer().dump(car)
+        return RemoveOutputSerializer().dump(car)
 
 
 class List(Resource):
     def get(self):
-        return List_output_serializer().dump(
+        return ListOutputSerializer().dump(
             {'cars': iter(parking_lot_db)})
 
 
@@ -58,7 +58,7 @@ def handler_validation_error(error):
     return result, 400
 
 
-@api.errorhandler(Parking_lot_error)
+@api.errorhandler(ParkingLotError)
 def handler_parking_error(error):
     return {}, 400
 

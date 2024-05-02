@@ -1,6 +1,6 @@
 import factory
 from factory import fuzzy
-from parking_lot.parking_lot import Ticket as Car_model
+from parking_lot.parking_lot import Ticket as CarModel
 
 
 tariffs = ['hourly', 'daily']
@@ -14,10 +14,10 @@ class Car(factory.Factory):
     daily_fee = factory.Faker('pyint')
 
     class Meta:
-        model = Car_model
+        model = CarModel
 
 
-class Car_daily_fee(Car):
+class CarDailyFee(Car):
     tariff = 'hourly'
     start = factory.Faker(
         'date_time_between', start_date='-15d', end_date='-1d')
@@ -25,14 +25,14 @@ class Car_daily_fee(Car):
         'date_time_between', start_date='now', end_date='now')
 
 
-class Car_daily_free(Car_daily_fee):
+class CarDailyFree(CarDailyFee):
     start = factory.Faker(
         'date_time_between', start_date='-15m', end_date='now')
     finish = factory.Faker(
         'date_time_between', start_date='now', end_date='now')
 
 
-class Car_hourly_fee(Car):
+class CarHourlyFee(Car):
     tariff = 'hourly'
     start = factory.Faker(
         'date_time_between', start_date='-15h', end_date='-1h')
@@ -40,14 +40,14 @@ class Car_hourly_fee(Car):
         'date_time_between', start_date='now', end_date='now')
 
 
-class Car_hourly_free(Car_hourly_fee):
+class CarHourlyFree(CarHourlyFee):
     start = factory.Faker(
         'date_time_between', start_date='-15m', end_date='now')
     finish = factory.Faker(
         'date_time_between', start_date='now', end_date='now')
 
 
-class Car_add(factory.Factory):
+class CarAdd(factory.Factory):
     license_plate = factory.Faker('license_plate')
     tariff = fuzzy.FuzzyChoice(tariffs)
 
@@ -55,7 +55,7 @@ class Car_add(factory.Factory):
         model = dict
 
 
-class Car_add_hourly(factory.Factory):
+class CarAddHourly(factory.Factory):
     license_plate = factory.Faker('license_plate')
     tariff = 'hourly'
 
@@ -63,14 +63,14 @@ class Car_add_hourly(factory.Factory):
         model = dict
 
 
-class Car_add_daily(factory.Factory):
+class CarAddDaily(factory.Factory):
     license_plate = factory.Faker('license_plate')
     tariff = 'daily'
 
     class Meta:
         model = dict
 
-class Car_add_api(factory.Factory):
+class CarAddApi(factory.Factory):
     car = factory.Faker('license_plate')
     tariff = fuzzy.FuzzyChoice(tariffs)
 
