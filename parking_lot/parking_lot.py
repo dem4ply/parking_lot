@@ -27,6 +27,14 @@ class CannotFindCarError(ParkingLotError):
         super().__init__(message=message)
 
 
+class TariffNoExistsError(ParkingLotError):
+    message = 'The tariff {} cannot be processed.'
+
+    def __init__(self, tariff=None):
+        message = self.message.format(tariff)
+        super().__init__(message=message)
+
+
 class Ticket:
     def __init__(
             self, license_plate, tariff, location, hourly_fee, daily_fee,
@@ -54,8 +62,7 @@ class Ticket:
             return self.proportional_diff_time * self.daily_fee
         if self.is_hourly:
             return self.proportional_diff_time * self.hourly_fee
-        raise NotImplementedError(
-            f"the tariff {self.tariff} is not implemented")
+        raise TariffNoExistsError( self.tariff )
 
     @functools.cached_property
     def diff_time(self):
