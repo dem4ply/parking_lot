@@ -10,8 +10,6 @@ class Car(factory.Factory):
     license_plate = factory.Faker('license_plate')
     tariff = fuzzy.FuzzyChoice(tariffs)
     location = factory.Faker('pyint')
-    hourly_fee = factory.Faker('pyint')
-    daily_fee = factory.Faker('pyint')
 
     class Meta:
         model = CarModel

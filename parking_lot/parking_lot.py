@@ -1,53 +1,20 @@
 # -*- coding: utf-8 -*-
 import functools
 import datetime
-
-
-class ParkingLotError(Exception):
-    message = 'unhandle error with parking lot'
-
-    def __init__(self, message=None):
-        if message is None:
-            message = self.message
-        self.data = {
-            'status': 'error',
-            'error': message
-        }
-
-
-class FullParkingError(ParkingLotError):
-    message = 'No free space.'
-
-
-class CarIsInParkingLotError(ParkingLotError):
-    message = 'The car {} is in the parking lot.'
-
-    def __init__(self, license_plate=None):
-        message = self.message.format(license_plate)
-        super().__init__(message=message)
-
-
-class CannotFindCarError(ParkingLotError):
-    message = 'Cannot find a car in the location {}.'
-
-    def __init__(self, location=None):
-        message = self.message.format(location)
-        super().__init__(message=message)
-
-
-class TariffNoExistsError(ParkingLotError):
-    message = 'The tariff {} cannot be processed.'
-
-    def __init__(self, tariff=None):
-        message = self.message.format(tariff)
-        super().__init__(message=message)
+from .tariff import Tariff
+from .exceptions import (
+    FullParkingError, CarIsInParkingLotError, CannotFindCarError
+)
 
 
 class Ticket:
     def __init__(
-            self, license_plate, tariff, location, hourly_fee, daily_fee,
-            start=None, finish=None):
+            self, license_plate, tariff, location, start=None, finish=None):
         self.license_plate = license_plate
+        if isinstance(tariff, str):
+            tariff = Tariff.resolve(tariff)
+        else:
+            tariff = tariff
         self.tariff = tariff
         self.location = location
         if start is None:
@@ -55,45 +22,24 @@ class Ticket:
         self.start = start
         self.finish = finish
 
-        self.hourly_fee = hourly_fee
-        self.daily_fee = daily_fee
-
     def exit(self):
         self.finish = datetime.datetime.now()
 
     @property
     def fee(self):
-        if self.is_free_charge:
-            return 0
-
-        if self.is_daily:
-            return self.proportional_diff_time * self.daily_fee
-        if self.is_hourly:
-            return self.proportional_diff_time * self.hourly_fee
-        raise TariffNoExistsError(self.tariff)
+        return self.tariff.fee(self.diff_time)
 
     @functools.cached_property
     def diff_time(self):
         return self.finish - self.start
 
     @property
-    def is_free_charge(self):
-        return self.diff_time.total_seconds() // (60 * 15) < 1
-
-    @property
-    def is_daily(self):
-        return self.tariff == 'daily'
-
-    @property
-    def is_hourly(self):
-        return self.tariff == 'hourly'
-
-    @property
     def proportional_diff_time(self):
-        if self.is_hourly:
-            return (self.diff_time.total_seconds() // 3600) + 1
-        if self.is_daily:
-            return (self.diff_time.total_seconds() // 86400) + 1
+        return self.tariff.proportional_diff_time(self.diff_time)
+
+    @property
+    def fee_cost(self):
+        return self.tariff.fee_cost
 
 
 class ParkingLot:
@@ -122,8 +68,7 @@ class ParkingLot:
 
         location = self.find_next_available_location()
         result = Ticket(
-            license_plate=license_plate, tariff=tariff, location=location,
-            hourly_fee=self.hourly_fee, daily_fee=self.daily_fee)
+            license_plate=license_plate, tariff=tariff, location=location,)
         self.locations[location] = result
         self.lot[license_plate] = result
         return result

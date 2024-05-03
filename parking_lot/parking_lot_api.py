@@ -10,7 +10,8 @@ from parking_lot.serializers import (
     RemoveOutput as RemoveOutputSerializer,
     ListOutput as ListOutputSerializer,
 )
-from parking_lot.parking_lot import ParkingLot, ParkingLotError
+from parking_lot.parking_lot import ParkingLot
+from parking_lot.exceptions import ParkingLotError
 
 parking_lot_db = ParkingLot(amount=10)
 
@@ -47,8 +48,8 @@ def join_messages(messages):
                 yield f"missing {k} data field"
             elif msg == 'Field cannot be blank.':
                 yield f"field {k} cannot be blank"
-            elif msg.startswith( 'Must be one of:' ):
-                msg = msg.replace( 'Must be one of: ', '' )[:-1]
+            elif msg.startswith('Must be one of:'):
+                msg = msg.replace('Must be one of: ', '')[:-1]
                 yield f"{k} must be one of {msg}"
             else:
                 yield msg

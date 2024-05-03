@@ -3,9 +3,9 @@
 import datetime
 import random
 import unittest
-from parking_lot.parking_lot import (
-    ParkingLot, FullParkingError, Ticket, CannotFindCarError,
-    TariffNoExistsError, CarIsInParkingLotError,
+from parking_lot.parking_lot import ParkingLot, FullParkingError, Ticket
+from parking_lot.exceptions import (
+    CannotFindCarError, TariffNoExistsError, CarIsInParkingLotError,
 )
 from tests.factories import (
     CarAdd, CarAddDaily, CarAddHourly,
@@ -26,18 +26,16 @@ class TestCar(unittest.TestCase):
     def test_houtly_tariff_should_be_proportional_after_15min(self):
         car = Car_hourly_factory.build()
         self.assertEqual(
-            car.fee, car.proportional_diff_time * car.hourly_fee)
+            car.fee, car.proportional_diff_time * car.fee_cost)
 
     def test_daily_tariff_should_be_proportional_after_15min(self):
         car = Car_daily_factory.build()
         self.assertEqual(
-            car.fee, car.proportional_diff_time * car.hourly_fee)
+            car.fee, car.proportional_diff_time * car.fee_cost)
 
     def test_fee_with_tariff_should_raise_tariff_no_exists(self):
-        car = Car_daily_factory.build(tariff='no_exists')
-        car.exit()
         with self.assertRaises(TariffNoExistsError):
-            car.fee
+            Car_daily_factory.build(tariff='no_exists')
 
 
 class TestParkingLot(unittest.TestCase):
